@@ -127,12 +127,12 @@ class PostUpdateView(LoginRequiredMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, DeleteView):
     model = Post
-    template_name = 'blog/detail.html'
+    template_name = 'blog/post_confirm_delete.html'
     pk_url_kwarg = 'post_id'
 
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
-        if obj.author != self.request.user:
+        if obj.author != request.user:
             return redirect('blog:post_detail', id=obj.pk)
         return super().dispatch(request, *args, **kwargs)
 
@@ -142,6 +142,9 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
             kwargs={'username': self.request.user.username}
         )
 
+    def delete(self, request, *args, **kwargs):
+        print(f"Удаление поста {self.get_object().id}")
+        return super().delete(request, *args, **kwargs)
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProfileEditForm
